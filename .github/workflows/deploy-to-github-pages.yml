@@ -1,0 +1,36 @@
+name: Deploy to `Github Pages`
+on: [push]
+
+jobs:
+  build-and-upload-artifacts:
+    name: Build and upload artifacts
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+
+  
+  deploy-to-github-pages:
+    name: Deploy to `Github Pages`
+    runs-on: self-hosted
+    needs: build-and-upload-artifacts
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to `Github Pages` using `actions/deploy-pages`
+        id: deployment
+        uses: actions/deploy-pages@v4
+    
